@@ -25,8 +25,8 @@ It:
 ## Install
 
 ```bash
-git clone https://github.com/Jhodytropical/ai-visibility-scan.git
-cd ai-visibility-scan
+git clone https://github.com/Jhodytropical/mits-ai-visibility-scan.git
+cd mits-ai-visibility-scan
 python3 -m venv .venv && .venv/bin/pip install -e .
 ```
 
