@@ -1,0 +1,10 @@
+{
+  "name": "Example Plumbing Co",
+  "aliases": ["Example Plumbing"],
+  "website": "https://www.example.com",
+  "phone": "(555) 010-0000",
+  "city": "Hollywood, FL",
+  "category": "plumbing",
+  "services": ["a leaking water heater", "a clogged drain at my house"],
+  "prompt_es": "¿Qué plomero en Hollywood, Florida me recomiendas para arreglar un calentador de agua?"
+}

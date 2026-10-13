@@ -1,0 +1,21 @@
+# Never published: keys, results, private business notes
+.env
+.env.*
+!.env.example
+*.key
+openai_key
+anthropic_key
+gemini_api_key
+out/
+profiles/
+OFFER.md
+MITS_NOTES.md
+*.tgz
+.private_patterns
+# Python
+.venv/
+__pycache__/
+*.egg-info/
+build/
+dist/
+.pytest_cache/
