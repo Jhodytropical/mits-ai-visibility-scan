@@ -2,9 +2,8 @@
 
 **When a customer asks ChatGPT, Claude or Gemini for a business like yours, are you named?**
 
-People now ask AI assistants for local recommendations: 45% of US consumers used an AI tool to find a local business in
-2026, up from 6% a year earlier (BrightLocal Local Consumer Review Survey, Feb 2026, 1,002 adults). Most small businesses
-are never mentioned. This tool measures it for one business and writes a one-page report the owner can read.
+45% of US consumers now use AI tools for local recommendations, up from 6% a year earlier (BrightLocal Local Consumer
+Review Survey, Feb 2026, 1,002 adults). Most small businesses are never mentioned. This tool measures it for one business and writes a one-page report the owner can read.
 
 It:
 

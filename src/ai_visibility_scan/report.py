@@ -77,8 +77,8 @@ def render(d: dict) -> str:
  <div class="stat"><b>{s['cited']}</b><span>answers that used your site as a source but did not name you</span></div>
  <div class="stat"><b>{s['site_pass']} / {s['site_total']}</b><span>website signals in place</span></div>
 </div>
-<div class="verdict {tone}"><b>{e(line)}</b><br><span class="muted">45% of US consumers used an AI tool to find a local
-business in 2026, up from 6% a year earlier (BrightLocal Local Consumer Review Survey, Feb 2026, 1,002 adults).</span></div>
+<div class="verdict {tone}"><b>{e(line)}</b><br><span class="muted">45% of US consumers now use AI tools for local
+recommendations, up from 6% a year earlier (BrightLocal Local Consumer Review Survey, Feb 2026, 1,002 adults).</span></div>
 
 <h2>Who AI recommends instead</h2>
 <div class="tw"><table><tr><th>Business named by AI</th><th>Times named</th></tr>{comp}</table></div>
