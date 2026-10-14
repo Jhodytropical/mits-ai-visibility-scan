@@ -10,6 +10,7 @@ out/
 profiles/
 OFFER.md
 MITS_NOTES.md
+MONEY_SEGMENTS_*
 *.tgz
 .private_patterns
 # Python
