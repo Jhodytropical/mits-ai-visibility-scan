@@ -148,6 +148,9 @@ def main() -> int:
         # ChatGPT: raw usage only (model pricing not recorded here; check the OpenAI billing page).
         "chatgpt_usage": {k: sum(r.get("usage", {}).get(k, 0) for r in results if r["engine"] == "ChatGPT")
                           for k in ("input_tokens", "output_tokens", "web_searches")},
+        # Gemini: raw usage only (input includes tool-use prompt tokens; output includes thinking tokens).
+        "gemini_usage": {k: sum(r.get("usage", {}).get(k, 0) for r in results if r["engine"] == "Gemini")
+                         for k in ("input_tokens", "output_tokens", "web_searches")},
     }
     slug = re.sub(r"[^a-z0-9]+", "-", p["name"].lower()).strip("-")
     out_dir = Path(args.out)

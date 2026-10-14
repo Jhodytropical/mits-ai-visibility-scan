@@ -88,7 +88,8 @@ def ask_claude(prompt: str, city: str, region: str) -> dict:
 
 
 def ask_gemini(prompt: str, city: str, region: str) -> dict:
-    out = {"engine": "Gemini", "model": GEMINI_MODEL, "prompt": prompt, "answer": "", "sources": [], "error": None}
+    out = {"engine": "Gemini", "model": GEMINI_MODEL, "prompt": prompt, "answer": "", "sources": [], "error": None,
+           "usage": {"input_tokens": 0, "output_tokens": 0, "web_searches": 0}}
     body = {
         "systemInstruction": {"parts": [{"text": ASSISTANT_SYSTEM + f" The user is in {city}, {region}."}]},
         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
@@ -103,7 +104,13 @@ def ask_gemini(prompt: str, city: str, region: str) -> dict:
         if r.status_code != 200:
             out["error"] = f"API {r.status_code}"
             return out
-        cand = (r.json().get("candidates") or [{}])[0]
+        d = r.json()
+        cand = (d.get("candidates") or [{}])[0]
+        out["model"] = d.get("modelVersion", GEMINI_MODEL)
+        u = d.get("usageMetadata") or {}
+        out["usage"]["input_tokens"] = u.get("promptTokenCount", 0) + u.get("toolUsePromptTokenCount", 0)
+        out["usage"]["output_tokens"] = u.get("candidatesTokenCount", 0) + u.get("thoughtsTokenCount", 0)
+        out["usage"]["web_searches"] = len(cand.get("groundingMetadata", {}).get("webSearchQueries", []))
         out["answer"] = "".join(p.get("text", "") for p in cand.get("content", {}).get("parts", []))
         for chunk in cand.get("groundingMetadata", {}).get("groundingChunks", []):
             web = chunk.get("web") or {}
