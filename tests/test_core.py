@@ -25,6 +25,18 @@ def test_build_prompts_uses_profile_and_limit():
     assert len(cli.build_prompts(PROFILE, 2)) == 2
 
 
+def test_build_prompts_professional_wording():
+    pro = {**PROFILE, "category": "estate planning attorney", "provider": "estate planning attorney",
+           "provider_plural": "estate planning attorneys", "services": ["a will or trust", "probate"]}
+    prompts = cli.build_prompts(pro, 4)
+    assert prompts[0] == "What are the best estate planning attorneys in Hollywood, FL? I want someone reliable."
+    assert prompts[2] == "Can you recommend an estate planning attorney near Hollywood, FL with good reviews?"
+    assert prompts[3].endswith("Which local estate planning attorney would you recommend?")
+    assert not any("compan" in q for q in prompts)
+    dentist = {**pro, "provider": "cosmetic dentist", "provider_plural": "cosmetic dentists"}
+    assert cli.build_prompts(dentist, 3)[2].startswith("Can you recommend a cosmetic dentist near")
+
+
 def test_mention_named_cited_absent():
     assert cli.mention(PROFILE, result("Try MITS SFL for this."), []) == "named"
     assert cli.mention(PROFILE, result("See www.mitssfl.net"), []) == "named"

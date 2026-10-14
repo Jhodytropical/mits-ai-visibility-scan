@@ -51,7 +51,9 @@ cp examples/profile.example.json my-business.json   # edit name, website, phone,
 .venv/bin/ai-visibility-scan my-business.json --cta-name "Your Agency" --cta-phone "(555) 010-0000" --cta-url https://example.com
 ```
 
-The profile's `category` is a noun phrase that reads naturally in "best {category} companies"; `services` holds two buyer
+The profile's `category` is a noun phrase that reads naturally in "best {category} companies". For professionals (lawyers,
+dentists…) add `provider` and `provider_plural` (e.g. "estate planning attorney" / "estate planning attorneys") and the questions
+say "best estate planning attorneys" instead of "companies"; `services` holds two buyer
 phrasings; `prompt_es` adds a Spanish question; `extra_prompts` adds your own.
 
 ## Cost

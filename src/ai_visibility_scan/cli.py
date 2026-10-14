@@ -29,12 +29,24 @@ def norm(s: str) -> str:
 def build_prompts(p: dict, limit: int) -> list[str]:
     city, cat = p["city"], p["category"]
     svc = p.get("services") or [cat]
-    prompts = [
-        f"What are the best {cat} companies in {city}? I want someone reliable.",
-        f"Who should I call for {svc[0]} in {city}?",
-        f"Can you recommend a {cat} company near {city} with good reviews?",
-        f"I'm in {city} and need help with {svc[1] if len(svc) > 1 else svc[0]}. Which local company would you recommend?",
-    ]
+    second = svc[1] if len(svc) > 1 else svc[0]
+    provider = p.get("provider")
+    if provider:  # professionals (lawyers, dentists…): "best estate planning attorneys", not "… attorney companies"
+        plural = p.get("provider_plural") or provider + "s"
+        article = "an" if provider[:1].lower() in "aeiou" else "a"
+        prompts = [
+            f"What are the best {plural} in {city}? I want someone reliable.",
+            f"Who should I call for {svc[0]} in {city}?",
+            f"Can you recommend {article} {provider} near {city} with good reviews?",
+            f"I'm in {city} and need help with {second}. Which local {provider} would you recommend?",
+        ]
+    else:
+        prompts = [
+            f"What are the best {cat} companies in {city}? I want someone reliable.",
+            f"Who should I call for {svc[0]} in {city}?",
+            f"Can you recommend a {cat} company near {city} with good reviews?",
+            f"I'm in {city} and need help with {second}. Which local company would you recommend?",
+        ]
     if p.get("prompt_es"):
         prompts.append(p["prompt_es"])
     prompts += p.get("extra_prompts", [])
