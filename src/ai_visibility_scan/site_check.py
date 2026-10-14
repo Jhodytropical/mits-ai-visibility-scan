@@ -3,6 +3,7 @@
 Each check returns {"id", "label", "status": pass|warn|fail, "detail", "fix"}. Only public pages are fetched.
 """
 from __future__ import annotations
+import html as html_lib
 
 import json
 import re
@@ -113,7 +114,7 @@ def check(website: str, phone_digits: str = "") -> list[dict]:
     title = re.search(r"<title[^>]*>(.*?)</title>", html, re.S | re.I)
     desc = re.search(r'<meta[^>]+name=["\']description["\'][^>]+content=["\']([^"\']*)', html, re.I)
     add("meta", "Title and description say what + where", "pass" if title and desc else "warn",
-        f"Title: {title.group(1).strip()[:90] if title else 'missing'} · Description: "
+        f"Title: {html_lib.unescape(title.group(1).strip())[:90] if title else 'missing'} · Description: "
         f"{'present' if desc else 'missing'}.",
         "Write a title and meta description naming your service and city (e.g. 'AC Repair in Hollywood, FL').")
 

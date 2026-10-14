@@ -38,8 +38,8 @@ def _cta(c: dict | None) -> str:
     phone = f' Call or WhatsApp <a href="tel:{e(tel)}">{e(c["phone"])}</a> ·' if tel else ""
     site = re.sub(r"^https?://(www\.)?", "", c.get("url", "")).rstrip("/")
     link = f' <a href="{e(c["url"])}">{e(site)}</a>' if c.get("url") else ""
-    return (f'<div class="cta"><b>Want this fixed for you?</b> {e(c["name"])} can make these changes and re-scan monthly so '
-            f"you can see whether AI assistants start naming you.{phone}{link}</div>")
+    return (f'<div class="cta"><b>Want this fixed for you?</b> {e(c["name"])} can make these changes as a one-time fix, and '
+            f"re-scan every month if you add monitoring, so you can see whether AI assistants start naming you.{phone}{link}</div>")
 
 
 def render(d: dict) -> str:
@@ -49,7 +49,7 @@ def render(d: dict) -> str:
     pct = round(100 * n / tot)
     tone, line = (("ok", "AI assistants already recommend you. Keep the signals consistent and monitor monthly.") if pct >= 50 else
                   ("mid", "AI assistants mention you sometimes, but competitors get most of the recommendations.") if n else
-                  ("", "When customers ask AI assistants for a business like yours, you are not being recommended."))
+                  ("", f"In the {s['answers']} answers we collected on {when}, no assistant recommended you by name."))
     engines_used = sorted({r["engine"] for r in d["results"]})
     labels = {"named": "Recommended", "cited": "Source only", "absent": "Not mentioned", "error": "No answer"}
 
@@ -65,7 +65,7 @@ def render(d: dict) -> str:
     fix_items = "".join(f"<li><b>{e(c['label'])}.</b> {e(c['fix'])}</li>" for c in fixes if c["fix"])
     fix_items += ("<li><b>Reviews and listings.</b> Make sure your Google Business Profile, Bing Places, Yelp and "
                   "industry directories show the same name, address, phone and hours. AI answers lean on these "
-                  "third-party sources (the sources column of this scan shows which ones).</li>")
+                  "third-party sources.</li>")
 
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>AI Visibility Scan — {e(p['name'])}</title><style>{CSS}</style></head><body><main>
@@ -93,7 +93,7 @@ recommendations, up from 6% a year earlier (BrightLocal Local Consumer Review Su
 
 {_cta(d.get("cta"))}
 
-<footer><b>How this scan works.</b> We asked {e(', '.join(engines_used))} the questions above on {e(when)} with live
+<footer><b>How this scan works.</b> We asked {e(' and '.join(engines_used) if len(engines_used) < 3 else ', '.join(engines_used[:-1]) + ' and ' + engines_used[-1])} the questions above on {e(when)} with live
 web search turned on, as a customer in {e(p['city'])} would, and recorded whether your business was named.
 Models: {e(', '.join(sorted({r['model'] for r in d['results']})))} via their developer APIs. AI answers change from
 one run to the next and can differ from the consumer apps{'' if 'ChatGPT' in engines_used else '; ChatGPT was not measured in this edition'}. No one can
