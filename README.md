@@ -18,7 +18,7 @@ It:
 | Assistant | API used | Notes |
 |---|---|---|
 | ChatGPT | OpenAI Responses API + `web_search` | `gpt-5.3-chat-latest`, falling back to `gpt-5.5` |
-| Claude | Anthropic Messages API + web search | `claude-opus-5-5` |
+| Claude | Anthropic Messages API + web search | `claude-sonnet-5-5` |
 | Gemini | Gemini API + Google Search grounding | `gemini-flash-latest` |
 
 ## Install
@@ -37,8 +37,8 @@ Set any of these. An assistant without a key is skipped.
 cp .env.example .env    # then fill in your keys; .env is gitignored
 ```
 
-or export `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY` in your shell. You can also point `AIVS_SECRETS_DIR` at a
-folder holding files named `openai_key`, `anthropic_key` and `gemini_api_key`. The "who AI recommends instead" table uses
+or export `OPENAI_API_KEY`, `AIVS_ANTHROPIC_API_KEY`, `GEMINI_API_KEY` in your shell. You can also point `AIVS_SECRETS_DIR` at a
+folder holding files named `openai_key`, `aivs_anthropic_key` (the scanner's own Anthropic key, never the shared one) and `gemini_api_key`. The "who AI recommends instead" table uses
 Claude; without an Anthropic key it stays empty.
 
 ## Run

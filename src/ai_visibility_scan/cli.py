@@ -106,7 +106,7 @@ def main() -> int:
         if e not in use:
             print(f"skipping {e}: no API key ({engines.KEYS[engines.ENGINE_KEYS[e]]})", file=sys.stderr)
     if not use:
-        ap.error("no engine has an API key — set ANTHROPIC_API_KEY, GEMINI_API_KEY and/or OPENAI_API_KEY")
+        ap.error("no engine has an API key — set AIVS_ANTHROPIC_API_KEY, GEMINI_API_KEY and/or OPENAI_API_KEY")
     jobs = [(e, q) for e in use for q in prompts]
     print(f"Scanning {p['name']}: {len(prompts)} prompts x {len(use)} engines ({', '.join(use)})", file=sys.stderr)
 
@@ -140,9 +140,9 @@ def main() -> int:
             "errors": len(results) - len(scored),
             "site_pass": sum(c["status"] == "pass" for c in site), "site_total": len(site),
         },
-        # Opus 5.5 list price $4/$20 per MTok; web search $10 per 1,000 searches. Extraction call not included.
-        "claude_cost_usd": round(sum(r.get("usage", {}).get("input_tokens", 0) * 4e-6
-                                     + r.get("usage", {}).get("output_tokens", 0) * 20e-6
+        # List price of engines.CLAUDE_MODEL per MTok; web search $10 per 1,000 searches. Extraction call not included.
+        "claude_cost_usd": round(sum(r.get("usage", {}).get("input_tokens", 0) * engines.CLAUDE_PRICE_PER_MTOK[0] / 1e6
+                                     + r.get("usage", {}).get("output_tokens", 0) * engines.CLAUDE_PRICE_PER_MTOK[1] / 1e6
                                      + r.get("usage", {}).get("web_searches", 0) * 0.01
                                      for r in results if r["engine"] == "Claude"), 3),
         # ChatGPT: raw usage only (model pricing not recorded here; check the OpenAI billing page).

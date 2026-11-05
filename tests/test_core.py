@@ -93,6 +93,16 @@ def test_keys_env_then_folder_then_missing(monkeypatch, tmp_path):
     assert engines._key("openai_key") == "from-env"
 
 
+def test_claude_uses_its_own_key_never_the_shared_one(monkeypatch, tmp_path):
+    for var in list(engines.KEYS.values()) + ["ANTHROPIC_API_KEY"]:
+        monkeypatch.delenv(var, raising=False)
+    (tmp_path / "anthropic_key").write_text("shared\n")      # the Jarvis/Nexux key file
+    monkeypatch.setenv("AIVS_SECRETS_DIR", str(tmp_path))
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "shared-env")
+    assert not engines.available("claude")
+    (tmp_path / "aivs_anthropic_key").write_text("own\n")
+    assert engines.available("claude") and engines._key("aivs_anthropic_key") == "own"
+
 def test_cli_skips_engines_without_keys(monkeypatch, tmp_path, capsys):
     for var in engines.KEYS.values():
         monkeypatch.delenv(var, raising=False)

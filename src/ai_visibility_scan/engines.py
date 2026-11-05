@@ -1,8 +1,9 @@
 """Ask AI assistants a buyer's question the way a customer would, with live web search on.
 
 Each engine returns {"engine", "model", "prompt", "answer", "sources": [{"title", "url"}], "error"}.
-API keys come from environment variables (ANTHROPIC_API_KEY, GEMINI_API_KEY, OPENAI_API_KEY) or, if unset, from
-files in the folder named by AIVS_SECRETS_DIR (anthropic_key, gemini_api_key, openai_key). They are read inside this
+API keys come from environment variables (AIVS_ANTHROPIC_API_KEY, GEMINI_API_KEY, OPENAI_API_KEY) or, if unset, from
+files in the folder named by AIVS_SECRETS_DIR (aivs_anthropic_key, gemini_api_key, openai_key). The scanner has its own
+Anthropic key (Jean 2026-11-05) so its cost shows separately; it never falls back to the shared ANTHROPIC_API_KEY. They are read inside this
 process and never touch argv, logs or output.
 """
 from __future__ import annotations
@@ -15,9 +16,10 @@ import anthropic
 import requests
 
 KEYS = {  # key file name -> environment variable
-    "anthropic_key": "ANTHROPIC_API_KEY", "gemini_api_key": "GEMINI_API_KEY", "openai_key": "OPENAI_API_KEY"}
-ENGINE_KEYS = {"claude": "anthropic_key", "gemini": "gemini_api_key", "chatgpt": "openai_key"}
-CLAUDE_MODEL = "claude-opus-5-5"
+    "aivs_anthropic_key": "AIVS_ANTHROPIC_API_KEY", "gemini_api_key": "GEMINI_API_KEY", "openai_key": "OPENAI_API_KEY"}
+ENGINE_KEYS = {"claude": "aivs_anthropic_key", "gemini": "gemini_api_key", "chatgpt": "openai_key"}
+CLAUDE_MODEL = "claude-sonnet-5-5"   # Jean 2026-11-05: Sonnet 5.5 replaces Opus 5.5 (half the per-token price)
+CLAUDE_PRICE_PER_MTOK = (2.00, 10.00)  # input, output list price for CLAUDE_MODEL
 GEMINI_MODEL = "gemini-flash-latest"   # the alias the consumer-grade Flash tier tracks
 
 # A neutral assistant persona: we want what the model recommends on its own, not what we steer it to.
@@ -46,7 +48,7 @@ def available(engine: str) -> bool:
 
 
 def _claude_client() -> anthropic.Anthropic:
-    return anthropic.Anthropic(api_key=_key("anthropic_key"), max_retries=3)
+    return anthropic.Anthropic(api_key=_key("aivs_anthropic_key"), max_retries=3)
 
 
 def ask_claude(prompt: str, city: str, region: str) -> dict:
