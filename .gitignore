@@ -11,6 +11,8 @@ profiles/
 OFFER.md
 MITS_NOTES.md
 MONEY_SEGMENTS_*
+SCAN_GAP_REVIEW_*
+AI_Visibility_Package_Options_*
 *.tgz
 .private_patterns
 # Python
