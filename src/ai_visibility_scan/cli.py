@@ -53,12 +53,22 @@ def build_prompts(p: dict, limit: int) -> list[str]:
     return prompts[:limit]
 
 
+# A name that starts with the second word of a place is not matched inside that place: "Gables Physical Therapy" must not
+# match "Coral Gables Physical Therapy", a different clinic (found in the 2026-10-15 review).
+_PLACE_LEAD = {"gables": "coral"}
+
+
+def own_match(key: str, text_norm: str) -> bool:
+    lead = _PLACE_LEAD.get(key.split()[0]) if key else None
+    return bool(re.search(rf"{f'(?<!{lead} )' if lead else ''}\b{re.escape(key)}\b", text_norm))
+
+
 def mention(p: dict, result: dict, named: list[str]) -> str:
     """named = recommended by name in the answer · cited = only appears in sources · absent."""
     keys = [norm(p["name"])] + [norm(a) for a in p.get("aliases", [])]
     keys = [k for k in keys if len(k) >= 3]
     domain = re.sub(r"^www\.", "", re.sub(r"^https?://", "", p["website"])).split("/")[0].lower()
-    has = lambda text: any(re.search(rf"\b{re.escape(k)}\b", norm(text)) for k in keys)  # noqa: E731
+    has = lambda text: any(own_match(k, norm(text)) for k in keys)  # noqa: E731
     if has(result["answer"]) or domain in result["answer"].lower() or any(has(n) for n in named):
         return "named"
     src = " ".join(f"{s['title']} {s['url']}" for s in result["sources"]).lower()
@@ -112,7 +122,8 @@ def main() -> int:
 
     with ThreadPoolExecutor(max_workers=4) as pool:
         results = list(pool.map(lambda j: askers[j[0]](j[1], city_only.strip(), region.strip()), jobs))
-        site = pool.submit(site_check.check, p["website"], re.sub(r"\D", "", p.get("phone", ""))).result()
+        site = pool.submit(site_check.check, p["website"], re.sub(r"\D", "", p.get("phone", "")), p.get("city", ""),
+                           p.get("business_type", "local")).result()
 
     ok = [r for r in results if r["answer"] and not r["error"]]
     # Listing who else was recommended needs Claude; without an Anthropic key the competitor table stays empty.

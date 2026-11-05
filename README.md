@@ -45,6 +45,8 @@ Claude; without an Anthropic key it stays empty.
 
 ```bash
 cp examples/profile.example.json my-business.json   # edit name, website, phone, city, category, services
+# optional "business_type": "online" for a software / product / online-only business (default "local"): the schema check
+# then asks for Organization fields (name, url, logo, sameAs) instead of address, hours and service area (MITS policy, 2026-11-01)
 .venv/bin/ai-visibility-scan my-business.json
 .venv/bin/ai-visibility-scan my-business.json --engines chatgpt --max-prompts 3   # cheaper
 .venv/bin/ai-visibility-scan my-business.json --no-cta                            # no call-to-action box

@@ -51,7 +51,10 @@ def render(d: dict) -> str:
                   ("mid", "AI assistants mention you sometimes, but competitors get most of the recommendations.") if n else
                   ("", f"In the {s['answers']} answers we collected on {when}, no assistant recommended you by name."))
     engines_used = sorted({r["engine"] for r in d["results"]})
-    labels = {"named": "Recommended", "cited": "Source only", "absent": "Not mentioned", "error": "No answer"}
+    asked = {eng: len({r["prompt"] for r in d["results"] if r["engine"] == eng}) for eng in engines_used}
+    total_q = len({r["prompt"] for r in d["results"]})
+    partial = "; ".join(f"{eng} was asked {k} of the {total_q} questions" for eng, k in asked.items() if k < total_q)
+    labels ={"named": "Recommended", "cited": "Source only", "absent": "Not mentioned", "error": "No answer"}
 
     rows = "".join(
         f"<tr><td>{e(r['prompt'])}</td><td>{e(r['engine'])}</td><td>{_pill(r['status'], labels[r['status']])}</td>"
@@ -94,7 +97,7 @@ recommendations, up from 6% a year earlier (BrightLocal Local Consumer Review Su
 {_cta(d.get("cta"))}
 
 <footer><b>How this scan works.</b> We asked {e(' and '.join(engines_used) if len(engines_used) < 3 else ', '.join(engines_used[:-1]) + ' and ' + engines_used[-1])} the questions above on {e(when)} with live
-web search turned on, as a customer in {e(p['city'])} would, and recorded whether your business was named.
+web search turned on, as a customer in {e(p['city'])} would, and recorded whether your business was named.{e(' ' + partial + '.') if partial else ''}
 Models: {e(', '.join(sorted({r['model'] for r in d['results']})))} via their developer APIs. AI answers change from
 one run to the next and can differ from the consumer apps{'' if 'ChatGPT' in engines_used else '; ChatGPT was not measured in this edition'}. No one can
 guarantee placement in AI answers. The fixes above improve the signals AI tools read; results are measured, not
